@@ -34,7 +34,7 @@ if [ -z "$domainName" ]
 	exit
 fi
 
-printf "Enter your ServerPilot app name: " ; read -r appName
+printf "Enter your Runcloud app name: " ; read -r appName
 if [ -z "$appName" ]
 	then
 	echo -e "\e[31mPlease provide the app name\e[39m"
@@ -43,8 +43,8 @@ fi
 
 printf "Is this a main domain or sub-domain? (main/sub): " ; read -r domainType
 
-spAppRoot="/srv/users/serverpilot/apps/$appName"
-spSSLDir="/etc/nginx-sp/vhosts.d/"
+spAppRoot="/home/runcloud/webapps/$appName"
+spSSLDir="/etc/nginx-rc/vhosts.d/"
 
 # Install Let's Encrypt libraries if not found
 if ! hash letsencrypt 2>/dev/null; then
@@ -68,7 +68,7 @@ fi
 
 if [ "$theAction" == "uninstall" ]; then
 	sudo rm "$spSSLDir$appName-ssl.conf" &>/dev/null
-	sudo service nginx-sp reload
+	sudo service nginx-rc reload
 	echo -e "\e[31mSSL has been removed. If you are seeing errors on your site, then please fix HTACCESS file and remove the rules that you added to force SSL\e[39m"
 elif [ "$theAction" == "install" ]; then
 	if [ -z "$domainType" ]
@@ -82,7 +82,7 @@ elif [ "$theAction" == "install" ]; then
 			exit
 		fi
 	fi
-	sudo service nginx-sp stop
+	sudo service nginx-rc stop
 	echo -e "\e[32mReady to install, press enter to continue\e[39m"
 	if [ "$domainType" == "main" ]; then
 		thecommand="letsencrypt certonly  --standalone --register-unsafely-without-email --agree-tos -d $domainName -d www.$domainName"
@@ -114,8 +114,8 @@ elif [ "$theAction" == "install" ]; then
 
 	root $spAppRoot/public;
 
-	access_log /srv/users/serverpilot/log/$appName/dev_nginx.access.log main;
-	error_log /srv/users/serverpilot/log/$appName/dev_nginx.error.log;
+	access_log /home/runcloud/logs/$appName/dev_nginx.access.log main;
+	error_log /home/runcloud/logs/$appName/dev_nginx.error.log;
 
 	proxy_set_header Host \$host;
 	proxy_set_header X-Real-IP \$remote_addr;
@@ -123,8 +123,8 @@ elif [ "$theAction" == "install" ]; then
 	proxy_set_header X-Forwarded-SSL on;
 	proxy_set_header X-Forwarded-Proto \$scheme;
 
-	include /etc/nginx-sp/vhosts.d/$appName.d/*.nonssl_conf;
-	include /etc/nginx-sp/vhosts.d/$appName.d/*.conf;
+	include /etc/nginx-rc/vhosts.d/$appName.d/*.nonssl_conf;
+	include /etc/nginx-rc/vhosts.d/$appName.d/*.conf;
 }" > "$spSSLDir$appName-ssl.conf"
 
 	elif [ "$domainType" == "sub" ]; then
@@ -142,8 +142,8 @@ elif [ "$theAction" == "install" ]; then
 
 	root $spAppRoot/public;
 
-	access_log /srv/users/serverpilot/log/$appName/dev_nginx.access.log main;
-	error_log /srv/users/serverpilot/log/$appName/dev_nginx.error.log;
+	access_log /home/runcloud/logs/$appName/dev_nginx.access.log main;
+	error_log /home/runcloud/logs/$appName/dev_nginx.error.log;
 
 	proxy_set_header Host \$host;
 	proxy_set_header X-Real-IP \$remote_addr;
@@ -151,8 +151,8 @@ elif [ "$theAction" == "install" ]; then
 	proxy_set_header X-Forwarded-SSL on;
 	proxy_set_header X-Forwarded-Proto \$scheme;
 
-	include /etc/nginx-sp/vhosts.d/$appName.d/*.nonssl_conf;
-	include /etc/nginx-sp/vhosts.d/$appName.d/*.conf;
+	include /etc/nginx-rc/vhosts.d/$appName.d/*.nonssl_conf;
+	include /etc/nginx-rc/vhosts.d/$appName.d/*.conf;
 }" > "$spSSLDir$appName-ssl.conf"
 	fi
 		echo -e "\e[32mSSL should have been installed for $domainName with auto-renewal (via cron)\e[39m"
@@ -187,8 +187,8 @@ elif [ "$theAction" == "install" ]; then
 		proxy_set_header X-Forwarded-SSL on;
 		proxy_set_header X-Forwarded-Proto \$scheme;
 
-		include /etc/nginx-sp/vhosts.d/$appName.d/*.nonssl_conf;
-		include /etc/nginx-sp/vhosts.d/$appName.d/*.conf;
+		include /etc/nginx-rc/vhosts.d/$appName.d/*.nonssl_conf;
+		include /etc/nginx-rc/vhosts.d/$appName.d/*.conf;
 	}" > "$spSSLDir$appName-ssl.conf"
 		echo -e "\e[32mSSL should have been installed for $domainName with auto-renewal (via cron)\e[39m"
 		else
@@ -197,7 +197,7 @@ elif [ "$theAction" == "install" ]; then
 	else
 		echo -e "\e[31mSomething unexpected occurred\e[39m"
 	fi 
-	sudo service nginx-sp start && sudo service nginx-sp reload
+	sudo service nginx-rc start && sudo service nginx-rc reload
 else
 	echo -e "\e[31mTask cannot be identified. It should be either install or uninstall \e[39m"
 fi
