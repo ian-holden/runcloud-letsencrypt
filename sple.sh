@@ -44,7 +44,7 @@ fi
 printf "Is this a main domain or sub-domain? (main/sub): " ; read -r domainType
 
 spAppRoot="/home/runcloud/webapps/$appName"
-spSSLDir="/etc/nginx-rc/vhosts.d/"
+spSSLDir="/etc/nginx-rc/conf.d/"
 
 # Install Let's Encrypt libraries if not found
 if ! hash letsencrypt 2>/dev/null; then
@@ -123,8 +123,8 @@ elif [ "$theAction" == "install" ]; then
 	proxy_set_header X-Forwarded-SSL on;
 	proxy_set_header X-Forwarded-Proto \$scheme;
 
-	include /etc/nginx-rc/vhosts.d/$appName.d/*.nonssl_conf;
-	include /etc/nginx-rc/vhosts.d/$appName.d/*.conf;
+	include /etc/nginx-rc/conf.d/$appName.d/*.nonssl_conf;
+	include /etc/nginx-rc/conf.d/$appName.d/*.conf;
 }" > "$spSSLDir$appName-ssl.conf"
 
 	elif [ "$domainType" == "sub" ]; then
@@ -151,8 +151,8 @@ elif [ "$theAction" == "install" ]; then
 	proxy_set_header X-Forwarded-SSL on;
 	proxy_set_header X-Forwarded-Proto \$scheme;
 
-	include /etc/nginx-rc/vhosts.d/$appName.d/*.nonssl_conf;
-	include /etc/nginx-rc/vhosts.d/$appName.d/*.conf;
+	include /etc/nginx-rc/conf.d/$appName.d/*.nonssl_conf;
+	include /etc/nginx-rc/conf.d/$appName.d/*.conf;
 }" > "$spSSLDir$appName-ssl.conf"
 	fi
 		echo -e "\e[32mSSL should have been installed for $domainName with auto-renewal (via cron)\e[39m"
@@ -187,8 +187,8 @@ elif [ "$theAction" == "install" ]; then
 		proxy_set_header X-Forwarded-SSL on;
 		proxy_set_header X-Forwarded-Proto \$scheme;
 
-		include /etc/nginx-rc/vhosts.d/$appName.d/*.nonssl_conf;
-		include /etc/nginx-rc/vhosts.d/$appName.d/*.conf;
+		include /etc/nginx-rc/conf.d/$appName.d/*.nonssl_conf;
+		include /etc/nginx-rc/conf.d/$appName.d/*.conf;
 	}" > "$spSSLDir$appName-ssl.conf"
 		echo -e "\e[32mSSL should have been installed for $domainName with auto-renewal (via cron)\e[39m"
 		else
